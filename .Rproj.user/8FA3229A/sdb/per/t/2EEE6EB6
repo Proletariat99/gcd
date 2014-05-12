@@ -1,0 +1,17 @@
+{
+    "contents" : "\nfn1 <- \"data/getdata_data_ss06hid.csv\"\nhousing_raw <<- read.csv(fn1, colClasses = \"character\")\nmaxvals <- max(as.numeric(housing_raw$VAL), na.rm=TRUE)\nhousing_val_length <- length(housing_raw$VAL[housing_raw$VAL==\"24\"])\n\n\nlibrary(xlsx)\nfn2 <- \"data/getdata_data_DATA.gov_NGAP.xlsx\"\n# gov_raw <- read.xlsx(fn2, 1, colClasses = \"character\")\n\ndat <- read.xlsx(fn2, 1, rowIndex=c(18:23), colIndex=c(7:15))\nsum(dat$Zip*dat$Ext, na.rm=T)\n\n\nlibrary(XML)\n# url<-\"https://d396qusza40orc.cloudfront.net/getdata%2Fdata%2Frestaurants.xml\"\nfn3 <- \"data/getdata_data_restaurants.xml\"\nxparse <- xmlParse(fn3)\nxdat <- xmlToDataFrame(xparse)\nstr(xdat)\n\nfile <- download.file(\"https://d396qusza40orc.cloudfront.net/getdata%2Fdata%2ss06pid.csv\", \"data/dl.csv\", \"curl\", \"wb\")\nfn4 <- \"data/dl.csv\"\nDT <- fread(fn4)\n",
+    "created" : 1399610641909.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "1481985080",
+    "id" : "2EEE6EB6",
+    "lastKnownWriteTime" : 1399697764,
+    "path" : "~/Google Drive/dev/R/coursera/gcd/Q1.R",
+    "project_path" : "Q1.R",
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "source_on_save" : false,
+    "type" : "r_source"
+}
