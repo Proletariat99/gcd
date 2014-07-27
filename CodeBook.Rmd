@@ -1,0 +1,63 @@
+---
+title: "CodeBook.md"
+output: html_document
+---
+
+# This is the code book for getting & cleaning data, final project.
+
+The intial data for the values in the data frame are read from 6 different files -- 3 text files for the "train" data set and 3 files for the "test" data set. 
+
+
+The 6 files were:
+* X_test.txt   The main data file for test subjects
+* X_train.txt  The main data file for train subjects
+* y_test.txt  Contains the activity code for test subjects
+* y_train.txt  Contains the ativity code for train subjects
+* subject_test.txt  Contains the subject identification code (an integer) for test subjects
+* subject_train.txt  Contains the subject identification code (an integer) for train subjects
+
+The test & train data were merged using rbind as in the following example:
+
+```{r}
+plat <- .Platform$OS.type
+if(plat == "windows"){gcd_path <- "C:\\Users\\Dave\\Google Drive\\dev\\R\\coursera\\gcd";s="\\"
+} else { gcd_path <- "~/Google Drive/dev/R/coursera/gcd"; s="/" }
+testlabfile <- paste(gcd_path,s,"data",s,"UCI HAR Dataset",s,"test",s,"y_test.txt", sep="")
+testsubjfile <- paste(gcd_path,s,"data",s,"UCI HAR Dataset",s,"test",s,"subject_test.txt", sep="")
+testdatfile <- paste(gcd_path,s,"data",s,"UCI HAR Dataset",s,"test",s,"X_test.txt", sep="")
+
+trainlabfile <- paste(gcd_path,s,"data",s,"UCI HAR Dataset",s,"train",s,"y_train.txt", sep="")
+trainsubjfile <- paste(gcd_path,s,"data",s,"UCI HAR Dataset",s,"train",s,"subject_train.txt", sep="")
+testlabs <- read.delim(testlabfile, sep="", stringsAsFactors=FALSE, col.names="ActivityCode", header=FALSE)
+trainlabs <- read.delim(trainlabfile, sep="", stringsAsFactors=FALSE, col.names="ActivityCode", header=FALSE)
+traindatfile <- paste(gcd_path,s,"data",s,"UCI HAR Dataset",s,"train",s,"X_train.txt", sep="")
+labs <- rbind(testlabs, trainlabs)    # merging test + train the old fashioned way.
+```
+
+In addition, I used the "features.txt" file to read in the column names for each measurement.  I broke these down into two different data frames -- one called feats_bd, which is the broken-apart feature name (which I thought might be useful) and one that just had the entire feature name, which is what I ended up using as the column headers:
+
+```{r}
+feat_bd_file <- paste(gcd_path,s,"data",s,"UCI HAR Dataset",s,"sepfeatures.txt", sep="")
+feats_bd <- read.delim(feat_bd_file, sep=",", stringsAsFactors=FALSE, header=FALSE, col.names=c("ColNum", "Type", "value", "dimension", "factor")) # feats breakdown
+featfile <- paste(gcd_path,s,"data",s,"UCI HAR Dataset",s,"features.txt", sep="")
+feats <- read.delim(featfile, sep="", stringsAsFactors=FALSE, header=FALSE, col.names=c("num", "name"))
+```
+
+For the Tidy Data Set, I used the following schema:
+
+Col 1 = the Subject Number
+Col 2 = the Activity Code 
+Col 3: 561  = the various data columns with their associated labels from features.txt.
+
+For the Mean/ Std data set, I found the index of any "names" column that contained the pattern std, mean or Mean.  I called that index "i2", then used it to index the appropriate columns into a data frame called df2.
+```{r}
+df <- cbind(subj, labs, dat)        # now mush it all together into one d.f. with named columns.
+i2 <- grep("std|mean|Mean", names(df))
+df2 <- df[,i2]
+print(names(df2))
+```
+
+
+For the Subset data set, I used the subject identifier to index a chunk (row) of all the columns in  df.  Then using colMeans, I calculatedeach subject's mean for each column.  I had trouble melting this into the proper data frame, but I'm really close.  Just been staring at this too long, I think.
+
+I ended up commenting out the last loop that binds the ultimate subset data frame together because I didn't want the code to throw errors for someone running it and trying to grade.
