@@ -58,23 +58,37 @@ df <- cbind(subj, labs, dat)        # now mush it all together into one d.f. wit
 i2 <- grep("std|mean|Mean", names(df))
 df2 <- df[,i2]
 print(names(df2))
-################  Section 2:  Extract only the measurements on the mean and standard deviation for each measurement. 
-i2 <- grep("std|mean|Mean", names(df))
-df2 <- df[,i2]
-print(names(df2))
+
 
 
 ################  Section 3:  Use descriptive activity names to name the activities in the data set
 key <- data.frame("num"=c(1:6), "activity"=c("WALKING", "WALKING_UPSTAIRS", "WALKING_DOWNSTIARS", "SITTING", "STANDING", "LAYING"))
 
 df$activity <- NA    # insert blank column called "activity"  It's at the end, unfortunately, but it'll have to do.
-####  now Map Activity Values to 
+#  now Map Activity Labels to Activity Code
+df$activity[df$ActivityCode==1] <- "WALKING"
+df$activity[df$ActivityCode==2] <- "WALKING_UPSTAIRS"
+df$activity[df$ActivityCode==3] <- "WALKING_DOWNSTAIRS"
+df$activity[df$ActivityCode==4] <- "SITTING"
+df$activity[df$ActivityCode==5] <- "STANDING"
+df$activity[df$ActivityCode==6] <- "LAYING"
 
-
-# df$activity[df$"act==1] <- "
+write.table(df, file="data_frame.txt", sep=",")
 
 ################  Section 4:  Appropriately labels the data set with descriptive variable names. 
+
+print("I pretty much already did this")
+
+################  Section 2:  Extract only the measurements on the mean and standard deviation for each measurement. 
+# Moved step 2 below step 3 to include the new labels for activity
+i2 <- grep("std|mean|Mean", names(df))   # search df for any "name" containing std, mean or Mean, and write to an index.
+df2 <- df[,i2]     # grab just the new indexed values
+# print(names(df2))
+
+
 ################  Section 5:  Creates a second, independent tidy data set with the average of each variable for each activity and each subject. 
+
+
 
 
 
